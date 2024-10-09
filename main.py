@@ -2,7 +2,7 @@
 # 著作 Azunyan
 # コーディング規約は基本的にPEP8に準じて作成します。
 # 本コードはOneMax問題を遺伝的アルゴリズムを用いて解くプログラムコードである。
-
+#テスト中です。
 import GeneticAlgorithm as ga
 import random
 from decimal import Decimal
