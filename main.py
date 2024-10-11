@@ -8,7 +8,7 @@ import random
 from decimal import Decimal
 
 # 遺伝子情報の長さ
-GENOM_LENGTH = 12
+GENOM_LENGTH = 8
 # 遺伝子集団の大きさ
 MAX_GENOM_LIST = 469
 # 遺伝子選択数
@@ -27,10 +27,13 @@ def create_genom(length):
     :param length: 遺伝子情報の長さ
     :return: 生成した個体集団genomClass
     """
-    genome_list = []
-    for i in range(length):
-        genome_list.append(random.randint(0, 1))
-    return ga.genom(genome_list, 0)
+    
+    first_digit = random.randint(1,5)
+    second_digit = random.randint(1,5)
+    first_two_digits = f"{first_digit}{second_digit}"
+    remaining_bits = ''.join(random.choice('01') for _ in range(length - 2))
+    individual = [int(bit) for bit in first_two_digits + remaining_bits]
+    return ga.genom(individual, 0)
 
 def evaluation(ga):
     """評価関数です。今回は全ての遺伝子が1となれば最適解となるので、
@@ -41,33 +44,33 @@ def evaluation(ga):
     genom_total = sum(ga.getGenom())
     return Decimal(genom_total) / Decimal(GENOM_LENGTH)
 
-def days(gene1, gene2, gene3):
-    if gene1 == 0 and gene2 == 0 and gene3 == 1:
+def days(gene1):
+    if gene1 == 1:
         return 'mon'
-    elif gene1 == 0 and gene2 == 1 and gene3 == 0:
+    elif gene1 == 2:
         return 'tue'
-    elif gene1 == 0 and gene2 == 1 and gene3 == 1:
+    elif gene1 == 3:
         return 'wed'
-    elif gene1 == 1 and gene2 == 0 and gene3 == 0:
+    elif gene1 == 4:
         return 'thu'
-    elif gene1 == 1 and gene2 == 0 and gene3 == 1:
+    elif gene1 == 5:
         return 'fri'
     else:
-        return 'fri'
+        return 'error'
     
-def times(gene1, gene2, gene3):
-    if gene1 == 0 and gene2 == 0 and gene3 == 1:
+def times(gene1):
+    if gene1 == 1:
         return '1st'
-    elif gene1 == 0 and gene2 == 1 and gene3 == 0:
+    elif gene1 == 2:
         return '2nd'
-    elif gene1 == 0 and gene2 == 1 and gene3 == 1:
+    elif gene1 == 3:
         return '3rd'
-    elif gene1 == 1 and gene2 == 0 and gene3 == 0:
+    elif gene1 == 4:
         return '4th'
-    elif gene1 == 1 and gene2 == 0 and gene3 == 1:
+    elif gene1 == 5:
         return '5th'
     else:
-        return '5th'
+        return 'error'
 
 if __name__ == '__main__':
     grade1 = 0
@@ -103,31 +106,6 @@ if __name__ == '__main__':
         "fri5th": 0
     }
 
-    """ mon1st = 0
-    mon2nd = 0
-    mon3rd = 0
-    mon4th = 0
-    mon5th = 0
-    tue1st = 0
-    tue2nd = 0
-    tue3rd = 0
-    tue4th = 0
-    tue5th = 0
-    wed1st = 0
-    wed2nd = 0
-    wed3rd = 0
-    wed4th = 0
-    wed5th = 0
-    thu1st = 0
-    thu2nd = 0
-    thu3rd = 0
-    thu4th = 0
-    thu5th = 0
-    fri1st = 0
-    fri2nd = 0
-    fri3rd = 0
-    fri4th = 0
-    fri5th = 0 """
 
     # 一番最初の現行世代個体集団を生成します。
     current_generation_individual_group = []
@@ -135,16 +113,17 @@ if __name__ == '__main__':
         current_generation_individual_group.append(create_genom(GENOM_LENGTH))
     
     for i in current_generation_individual_group:
-        gene1 = i.getGenom()[0]
-        gene2 = i.getGenom()[1]
-        
-        if gene1 == 0 and gene2 == 0:
+        gene2 = i.getGenom()[2]
+        gene3 = i.getGenom()[3]
+        ##print(f"gene2: {gene2}, gene3: {gene3}") 
+
+        if gene2 == 0 and gene3 == 0:
             grade1+=1
-        elif gene1 == 0 and gene2 == 1:
+        elif gene2 == 0 and gene3 == 1:
             grade2+=1
-        elif gene1 == 1 and gene2 == 0:
+        elif gene2 == 1 and gene3 == 0:
             grade3+=1
-        elif gene1 == 1 and gene2 == 1:
+        elif gene2 == 1 and gene3 == 1:
             grade4+=1
         else:
             pass
@@ -155,20 +134,12 @@ if __name__ == '__main__':
     print(grade4)
 
     for i in current_generation_individual_group:
-        gene3 = i.getGenom()[2]
-        gene4 = i.getGenom()[3]
-        gene5 = i.getGenom()[4]
-        gene6 = i.getGenom()[5]
-        gene7 = i.getGenom()[6]
-        gene8 = i.getGenom()[7]
+        gene0 = i.getGenom()[0]
+        gene1 = i.getGenom()[1]
+        
 
-        day = days(gene3, gene4, gene5)
-        time = times(gene6, gene7, gene8)
-
-        """ if day == "mon" and time == "1st":
-            mon1st += 1
-        elif day == "mon" and time == "2nd":
-            mon2nd += 1  """
+        day = days(gene0)
+        time = times(gene1)
 
         day_time = f"{day}{time}"
         if day_time in day_time_count:
@@ -186,9 +157,9 @@ if __name__ == '__main__':
                 print(f"{day_time_count[key]:4}", end=" | ")
             else:
                 print("  0 ", end="| ")
-        print()
+        print() 
 
 
 
     """ for i in current_generation_individual_group:
-        print(i.getGenom())  """
+        print(i.getGenom()) """  
