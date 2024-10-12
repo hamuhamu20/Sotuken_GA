@@ -7,20 +7,11 @@ import GeneticAlgorithm as ga
 import random
 from decimal import Decimal
 
-# 遺伝子情報の長さ
-GENOM_LENGTH = 8
-# 遺伝子集団の大きさ
-MAX_GENOM_LIST = 469
-# 遺伝子選択数
-SELECT_GENOM = 20
-# 個体突然変異確率
-INDIVIDUAL_MUTATION = 0.1
-# 遺伝子突然変異確率
-GENOM_MUTATION = 0.1
-# 繰り返す世代数
-MAX_GENERATION = 10
-
-
+grade1 = 0
+grade2 = 0
+grade3 = 0
+grade4 = 0
+error = 0
 def create_genom(length):
     """
     引数で指定された桁のランダムな遺伝子情報を生成、格納したgenomClassで返します。
@@ -41,8 +32,32 @@ def evaluation(ga):
     :param ga: 評価を行うgenomClass
     :return: 評価処理をしたgenomClassを返す
     """
-    genom_total = sum(ga.getGenom())
-    return Decimal(genom_total) / Decimal(GENOM_LENGTH)
+    global grade1, grade2, grade3, grade4, error
+    gene2 = ga.getGenom()[2]
+    gene3 = ga.getGenom()[3]
+    print(f"gene2: {gene2}, gene3: {gene3}") 
+
+    if gene2 == 0 and gene3 == 0 and grade1 < 244:
+        grade1+=1
+        ##print(f"Grade1 incremented: {grade1}")
+        return 1
+    elif gene2 == 0 and gene3 == 1 and grade2 < 95:
+        grade2+=1
+        ##print(f"Grade2 incremented: {grade2}")
+        return 1
+    elif gene2 == 1 and gene3 == 0 and grade3 < 82:
+        grade3+=1
+        ##print(f"Grade3 incremented: {grade3}")
+        return 1
+    elif gene2 == 1 and gene3 == 1 and grade4 < 42:
+        grade4+=1
+        ##print(f"Grade4 incremented: {grade4}")
+        return 1
+    else:
+        error+=1
+        ##print("error")
+        return -1
+
 
 def days(gene1):
     if gene1 == 1:
@@ -56,7 +71,7 @@ def days(gene1):
     elif gene1 == 5:
         return 'fri'
     else:
-        return 'error'
+        print("error")
     
 def times(gene1):
     if gene1 == 1:
@@ -70,13 +85,24 @@ def times(gene1):
     elif gene1 == 5:
         return '5th'
     else:
-        return 'error'
+        print("error")
+
+
+# 遺伝子情報の長さ
+GENOM_LENGTH = 8
+# 遺伝子集団の大きさ
+MAX_GENOM_LIST = 469
+# 遺伝子選択数
+SELECT_GENOM = 20
+# 個体突然変異確率
+INDIVIDUAL_MUTATION = 0.1
+# 遺伝子突然変異確率
+GENOM_MUTATION = 0.1
+# 繰り返す世代数
+MAX_GENERATION = 1
+
 
 if __name__ == '__main__':
-    grade1 = 0
-    grade2 = 0
-    grade3 = 0
-    grade4 = 0
 
     day_time_count = {
         "mon1st": 0,
@@ -112,26 +138,12 @@ if __name__ == '__main__':
     for i in range(MAX_GENOM_LIST):
         current_generation_individual_group.append(create_genom(GENOM_LENGTH))
     
-    for i in current_generation_individual_group:
-        gene2 = i.getGenom()[2]
-        gene3 = i.getGenom()[3]
-        ##print(f"gene2: {gene2}, gene3: {gene3}") 
+    for count_ in range(1, MAX_GENERATION + 1):
+        for i in range(MAX_GENOM_LIST):
+            
+            evaluation_result = evaluation(current_generation_individual_group[i])
+            current_generation_individual_group[i].setEvaluation(evaluation_result)
 
-        if gene2 == 0 and gene3 == 0:
-            grade1+=1
-        elif gene2 == 0 and gene3 == 1:
-            grade2+=1
-        elif gene2 == 1 and gene3 == 0:
-            grade3+=1
-        elif gene2 == 1 and gene3 == 1:
-            grade4+=1
-        else:
-            pass
-    
-    print(grade1)
-    print(grade2)
-    print(grade3)
-    print(grade4)
 
     for i in current_generation_individual_group:
         gene0 = i.getGenom()[0]
@@ -146,7 +158,6 @@ if __name__ == '__main__':
             day_time_count[day_time] += 1
     
     # 時間割形式で結果を表示する
-    # 時間割形式で結果を表示する
     print("     | 1st | 2nd | 3rd | 4th | 5th |")
     print("-----+----+----+----+----+----+")
     for day in ["mon", "tue", "wed", "thu", "fri"]:
@@ -159,7 +170,14 @@ if __name__ == '__main__':
                 print("  0 ", end="| ")
         print() 
 
+    for idx, individual in enumerate(current_generation_individual_group):
+        print(f"Individual {idx + 1} Evaluation: {individual.getEvaluation()}")
 
+    print(f"total grade1: {grade1}")
+    print(f"total grade2: {grade2}")
+    print(f"total grade3: {grade3}")
+    print(f"total grade4: {grade4}")
+    print(f"total error: {error}")
 
     """ for i in current_generation_individual_group:
         print(i.getGenom()) """  
