@@ -68,33 +68,33 @@ def evaluation(ga):
     gene3 = ga.getGenom()[3]
     ##print(f"gene2: {gene2}, gene3: {gene3}") 
 
-    if gene2 == 0 and gene3 == 0 and grade1 < 244:
-        grade1 += 1
-        ##print(f"Grade1 incremented: {grade1}")
-        fitness += 1
-    elif gene2 == 0 and gene3 == 1 and grade2 < 95:
-        grade2 += 1
-        ##print(f"Grade2 incremented: {grade2}")
+    if gene2 == 1 and gene3 == 1 and grade4 < 48:
+        grade4 += 1
+        ##print(f"Grade4 incremented: {grade4}")
         fitness += 1
     elif gene2 == 1 and gene3 == 0 and grade3 < 82:
         grade3 += 1
         ##print(f"Grade3 incremented: {grade3}")
         fitness += 1
-    elif gene2 == 1 and gene3 == 1 and grade4 < 48:
-        grade4 += 1
-        ##print(f"Grade4 incremented: {grade4}")
+    elif gene2 == 0 and gene3 == 1 and grade2 < 95:
+        grade2 += 1
+        ##print(f"Grade2 incremented: {grade2}")
         fitness += 1
     else:
-        error += 1
-        ##print("error")
-        fitness -= 1
-
+        gene2 = 0
+        gene3 = 0
+        grade1 += 1
+        ##print(f"Grade1 incremented: {grade1}")
+        fitness += 1
+        ##print(f"gene2 changed to: {gene2}, gene3 changed to: {gene3}")
+    ##2～4年生の遺伝子が全て埋まったら残りを全て1年生の遺伝子に書き換える
+    ga.setGenom([ga.getGenom()[0], ga.getGenom()[1], gene2, gene3] + ga.getGenom()[4:])
+    
 
 
     ##遺伝子を時間割ごとに割り振る
     gene0 = ga.getGenom()[0]
     gene1 = ga.getGenom()[1]
-    
 
     day = days(gene0)
     time = times(gene1)
@@ -108,6 +108,9 @@ def evaluation(ga):
         else:
             fitness -= 1
 
+
+    ##(10/15)3,4年を対象にゼミは優先的にし火曜4，5限、木曜5限にすること。90のゼミを入れる事
+    
     return fitness
 
 ##曜日の値を返す
@@ -170,10 +173,17 @@ if __name__ == '__main__':
 
     
         
-    
+    for idx, individual in enumerate(current_generation_individual_group):
+        print(f"Individual {idx + 1} | Evaluation: {individual.getEvaluation()} | GA: {individual.getGenom()}")
+
+    print(f"total grade1: {grade1}")
+    print(f"total grade2: {grade2}")
+    print(f"total grade3: {grade3}")
+    print(f"total grade4: {grade4}")
+
     # 時間割形式で結果を表示する
-    print("     | 1st | 2nd | 3rd | 4th | 5th |")
-    print("-----+----+----+----+----+----+")
+    print("      |  1st |  2nd |  3rd |  4th |  5th |")
+    print("------+------+------+------+------+------+")
     for day in ["mon", "tue", "wed", "thu", "fri"]:
         print(f"{day.capitalize():>5}", end=" | ")
         for time in ["1st", "2nd", "3rd", "4th", "5th"]:
@@ -184,14 +194,7 @@ if __name__ == '__main__':
                 print("  0 ", end="| ")
         print() 
 
-    for idx, individual in enumerate(current_generation_individual_group):
-        print(f"Individual {idx + 1} Evaluation: {individual.getEvaluation()}")
-
-    print(f"total grade1: {grade1}")
-    print(f"total grade2: {grade2}")
-    print(f"total grade3: {grade3}")
-    print(f"total grade4: {grade4}")
-    print(f"total error: {error}")
+    
 
     """ for i in current_generation_individual_group:
         print(i.getGenom()) """  
